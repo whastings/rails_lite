@@ -13,6 +13,10 @@ describe Params do
   let(:res) { WEBrick::HTTPResponse.new(:HTTPVersion => '1.0') }
   let(:users_controller) { UsersController.new(req, res) }
 
+  it "handles an empty request" do
+    expect { Params.new(req) }.to_not raise_error
+  end
+
   context "#query_string" do
     it "handles single key and value" do
       req.query_string = "key=val"
