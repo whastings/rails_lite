@@ -11,8 +11,19 @@ class Params
   def [](key)
   end
 
+  def permit(*keys)
+  end
+
+  def require(key)
+  end
+
+  def permitted?(key)
+  end
+
   def to_s
   end
+
+  class AttributeNotFoundError < ArgumentError; end;
 
   private
   # this should return deeply nested hash
