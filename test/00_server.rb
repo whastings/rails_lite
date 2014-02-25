@@ -11,19 +11,17 @@ trap('INT') { server.shutdown }
 
 class MyController < ControllerBase
   def go
-p request.path
     if request.path == '/'
       render_content("hello world!", "text/html")
     elsif request.path == '/redirect'
       redirect_to('http://objectdotcreate.net')
     elsif request.path == '/render'
       render :show
+    elsif request.path == '/session'
+      session["count"] ||= 0
+       session["count"] += 1
+       render :counting_show
     end
-
-    # after you have sessions going, uncomment:
-#    session["count"] ||= 0
-#    session["count"] += 1
-#    render :counting_show
   end
 end
 
