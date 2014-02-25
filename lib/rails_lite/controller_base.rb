@@ -9,6 +9,8 @@ class ControllerBase
   alias_method :request, :req
   alias_method :response, :res
 
+  TEMPLATES_BASE_PATH = "views"
+
   # setup the controller
   def initialize(request, response, route_params = {})
     @req, @res = request, response
@@ -40,6 +42,10 @@ class ControllerBase
   # use ERB and binding to evaluate templates
   # pass the rendered html to render_content
   def render(template_name)
+    template_content = File.read(template_path(template_name))
+    template = ERB.new(template_content)
+    response_body = template.result(get_binding)
+    render_content(response_body, 'text/html')
   end
 
   # method exposing a `Session` object
@@ -58,5 +64,13 @@ class ControllerBase
 
   def check_already_rendered
     raise RuntimeError, 'Tried to respond more than once' if already_rendered?
+  end
+
+  def controller_name
+    self.class.to_s.underscore
+  end
+
+  def template_path(template)
+    File.join(TEMPLATES_BASE_PATH, controller_name, "#{template}.html.erb")
   end
 end

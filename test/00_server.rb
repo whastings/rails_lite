@@ -16,10 +16,9 @@ p request.path
       render_content("hello world!", "text/html")
     elsif request.path == '/redirect'
       redirect_to('http://objectdotcreate.net')
+    elsif request.path == '/render'
+      render :show
     end
-
-    # after you have template rendering, uncomment:
-#    render :show
 
     # after you have sessions going, uncomment:
 #    session["count"] ||= 0
