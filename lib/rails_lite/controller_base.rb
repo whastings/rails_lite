@@ -18,6 +18,7 @@ class ControllerBase
   # set the responses content type to the given type
   # later raise an error if the developer tries to double render
   def render_content(content, type)
+    check_already_rendered
     response.content_type = type
     response.body = content
     @already_rendered = true
@@ -30,6 +31,7 @@ class ControllerBase
 
   # set the response status code and header
   def redirect_to(url)
+    check_already_rendered
     response.status = 302
     response['Location'] = url
     @already_rendered = true
@@ -46,5 +48,15 @@ class ControllerBase
 
   # use this with the router to call action_name (:index, :show, :create...)
   def invoke_action(name)
+  end
+
+  private
+
+  def get_binding
+    binding
+  end
+
+  def check_already_rendered
+    raise RuntimeError, 'Tried to respond more than once' if already_rendered?
   end
 end
