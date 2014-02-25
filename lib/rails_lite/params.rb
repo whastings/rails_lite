@@ -8,7 +8,7 @@ class Params
   # 2. post body
   # 3. route params
   def initialize(request, route_params = {})
-    @params = {}
+    @params = route_params
     if request.query_string
       @params.merge!(parse_www_encoded_form(request.query_string))
     end
@@ -18,7 +18,7 @@ class Params
   end
 
   def [](key)
-    @params[key]
+    @params[key.to_s]
   end
 
   def permit(*keys)

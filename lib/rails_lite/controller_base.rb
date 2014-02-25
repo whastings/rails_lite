@@ -14,7 +14,7 @@ class ControllerBase
   # setup the controller
   def initialize(request, response, route_params = {})
     @req, @res = request, response
-    @params = Params.new(request)
+    @params = Params.new(request, route_params)
   end
 
   # populate the response with content

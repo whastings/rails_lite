@@ -15,8 +15,20 @@ class Route
   # use pattern to pull out route params (save for later?)
   # instantiate controller and call controller action
   def run(request, response)
-    controller = controller_class.new(request, response, {})
+    controller = controller_class.new(request, response, route_params(request))
     controller.invoke_action(action_name.to_sym)
+  end
+
+  private
+
+  def route_params(request)
+    params = {}
+    matches = pattern.match(request.path)
+    matches.names.each do |name|
+      value = matches[name]
+      params[name] = value unless value.nil?
+    end
+    params
   end
 end
 
