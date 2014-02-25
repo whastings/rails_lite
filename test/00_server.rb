@@ -11,7 +11,12 @@ trap('INT') { server.shutdown }
 
 class MyController < ControllerBase
   def go
-    render_content("hello world!", "text/html")
+p request.path
+    if request.path == '/'
+      render_content("hello world!", "text/html")
+    elsif request.path == '/redirect'
+      redirect_to('http://objectdotcreate.net')
+    end
 
     # after you have template rendering, uncomment:
 #    render :show
