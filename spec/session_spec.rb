@@ -29,6 +29,11 @@ describe Session do
         cookie = res.cookies.find { |c| c.name == '_rails_lite_app' }
         JSON.parse(cookie.value).should be_instance_of(Hash)
       end
+
+      it "gives a new session a unique id" do
+        cookie = res.cookies.find { |c| c.name == '_rails_lite_app' }
+        expect(JSON.parse(cookie.value)).to have_key('session_id')
+      end
     end
 
     context "with cookies in request" do

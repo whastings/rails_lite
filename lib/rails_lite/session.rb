@@ -12,6 +12,7 @@ class Session
       @attributes = JSON.parse(cookie.value)
     end
     @attributes ||= {}
+    store_session_id
   end
 
   def [](key)
@@ -32,5 +33,16 @@ class Session
     value = @attributes.to_json
     session_cookie = WEBrick::Cookie.new(SESSION_COOKIE_NAME, value)
     response.cookies << session_cookie
+  end
+
+  def session_id
+    @attributes['session_id']
+  end
+
+  private
+
+  def store_session_id
+    return unless @attributes['session_id'].nil?
+    @attributes['session_id'] = SecureRandom.urlsafe_base64(16)
   end
 end
