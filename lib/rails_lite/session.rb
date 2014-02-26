@@ -32,6 +32,7 @@ class Session
   def store_session(response)
     value = @attributes.to_json
     session_cookie = WEBrick::Cookie.new(SESSION_COOKIE_NAME, value)
+    session_cookie.path = '/'
     response.cookies << session_cookie
   end
 
