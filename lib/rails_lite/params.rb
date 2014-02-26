@@ -15,6 +15,7 @@ class Params
     if request.body
       @params.merge!(parse_www_encoded_form(request.body))
     end
+    @permitted_keys = []
   end
 
   def [](key)
@@ -22,12 +23,17 @@ class Params
   end
 
   def permit(*keys)
+    @permitted_keys.concat(keys)
   end
 
   def require(key)
+    required_value = self[key]
+    raise AttributeNotFoundError, '#{key} not found' unless required_value
+    required_value
   end
 
   def permitted?(key)
+    @permitted_keys.include?(key)
   end
 
   def to_s
