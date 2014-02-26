@@ -1,5 +1,6 @@
 require 'webrick'
 require 'rails_lite'
+require 'active_record_lite'
 
 describe Params do
   before(:all) do
@@ -99,8 +100,16 @@ describe Params do
     end
 
     describe "interaction with ARLite models" do
+      before(:all) do
+        DBConnection.reset
+        class Cat < SQLObject
+        end
+      end
       it "throws a ForbiddenAttributesError if mass assignment is attempted with unpermitted attributes" do
-
+        req.stub(:body) { "name=persephone&owner_id=1" }
+        params = Params.new(req)
+        params.permit('name')
+        expect { Cat.new(params) }.to raise_error(ForbiddenAttributesError)
       end
     end
   end

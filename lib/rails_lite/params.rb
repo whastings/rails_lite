@@ -22,6 +22,10 @@ class Params
     @params[key.to_s]
   end
 
+  def each(&block)
+    @params.each(&block)
+  end
+
   def permit(*keys)
     @permitted_keys.concat(keys)
   end
