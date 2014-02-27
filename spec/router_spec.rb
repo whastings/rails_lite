@@ -5,7 +5,7 @@ require 'rspec'
 describe Route do
   let(:req) { WEBrick::HTTPRequest.new(:Logger => nil) }
   let(:res) { WEBrick::HTTPResponse.new(:HTTPVersion => '1.0') }
-
+  let(:resources) { { csrf_token: double('csrf_token', has_token?: false) } }
 
   describe "#matches?" do
     it "matches simple regular expression" do
@@ -40,10 +40,12 @@ describe Route do
       dummy_controller_class = DummyController
       dummy_controller_instance = DummyController.new
       dummy_controller_instance.stub(:invoke_action)
-      dummy_controller_class.stub(:new).with(req, res, {}) { dummy_controller_instance }
+      dummy_controller_class.stub(:new).with(req, res, resources, {}) do
+        dummy_controller_instance
+      end
       dummy_controller_instance.should_receive(:invoke_action)
       index_route = Route.new(Regexp.new("^/users$"), :get, dummy_controller_class, :index)
-      index_route.run(req, res)
+      index_route.run(req, res, resources)
     end
   end
 end
@@ -51,6 +53,7 @@ end
 describe Router do
   let(:req) { WEBrick::HTTPRequest.new(:Logger => nil) }
   let(:res) { WEBrick::HTTPResponse.new(:HTTPVersion => '1.0') }
+  let(:resources) { { csrf_token: double('csrf_token', has_token?: false) } }
 
   describe "#add_route" do
     it "adds a route" do
@@ -85,7 +88,7 @@ describe Router do
       subject.add_route(1, 2, 3, 4)
       req.stub(:path) { "/users" }
       req.stub(:request_method) { :get }
-      subject.run(req, res)
+      subject.run(req, res, resources)
       res.status.should == 404
     end
   end

@@ -12,9 +12,10 @@ describe RailsLite do
     let(:router) { double('router') }
     let(:request) { double('request') }
     let(:response) { double('response') }
+    let(:resources) { double('resources') }
     it "calls its Router's run method" do
       subject.stub(:router) { router }
-      expect(router).to receive(:run).with(request, response)
+      expect(router).to receive(:run)
       subject.run(request, response)
     end
   end

@@ -11,7 +11,8 @@ describe ControllerBase do
 
   let(:req) { WEBrick::HTTPRequest.new(:Logger => nil) }
   let(:res) { WEBrick::HTTPResponse.new(:HTTPVersion => '1.0') }
-  let(:users_controller) { UsersController.new(req, res) }
+  let(:resources) { { csrf_token: double('csrf_token', has_token?: false) } }
+  let(:users_controller) { UsersController.new(req, res, resources) }
 
   describe "#render_content" do
     before(:each) do
@@ -27,7 +28,7 @@ describe ControllerBase do
     end
 
     describe "#already_rendered?" do
-      let(:users_controller2) { UsersController.new(req, res) }
+      let(:users_controller2) { UsersController.new(req, res, resources) }
       it "is false before rendering" do
         expect(users_controller2.already_rendered?).to eq(false)
       end
@@ -60,7 +61,7 @@ describe ControllerBase do
     end
 
     describe "#already_rendered?" do
-      let(:users_controller2) { UsersController.new(req, res) }
+      let(:users_controller2) { UsersController.new(req, res, resources) }
       it "is false before rendering" do
         expect(users_controller2.already_rendered?).to eq(false)
       end
@@ -91,7 +92,7 @@ describe ControllerBase do
     end
 
     describe "#already_rendered?" do
-      let(:users_controller2) { UsersController.new(req, res) }
+      let(:users_controller2) { UsersController.new(req, res, resources) }
       it "is false before rendering" do
         expect(users_controller2.already_rendered?).to eq(false)
       end
