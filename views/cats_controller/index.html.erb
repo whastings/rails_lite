@@ -5,3 +5,20 @@
     <li><a href="/cats/<%= cat.id %>"><%= cat.name %></a></li>
   <% end %>
 </ul>
+
+<h2>Add a Cat</h2>
+<form action="/cats" method="post">
+  <input type="hidden" name="authenticity_token"
+         value="<%= authenticity_token %>" />
+  <label>
+    Name
+    <input type="text" name="cat[name]" />
+  </label>
+
+  <label>
+    User ID
+    <input type="text" name="cat[owner_id]" />
+  </label>
+
+  <input type="submit" value="Go" />
+</form>

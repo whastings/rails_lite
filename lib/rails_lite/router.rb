@@ -14,8 +14,9 @@ class Route
 
   # use pattern to pull out route params (save for later?)
   # instantiate controller and call controller action
-  def run(request, response)
-    controller = controller_class.new(request, response, route_params(request))
+  def run(request, response, resources)
+    controller = controller_class.new(request, response,
+                                      resources, route_params(request))
     controller.invoke_action(action_name.to_sym)
   end
 
@@ -69,10 +70,10 @@ class Router
   end
 
   # either throw 404 or call run on a matched route
-  def run(request, response)
+  def run(request, response, resources)
     route = match(request)
     if route
-      route.run(request, response)
+      route.run(request, response, resources)
     else
       response.status = 404
     end

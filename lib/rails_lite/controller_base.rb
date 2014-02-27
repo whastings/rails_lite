@@ -3,7 +3,6 @@ require 'active_support/inflector'
 require_relative 'params'
 require_relative 'session'
 
-
 class ControllerBase
   attr_reader :params, :req, :res
   alias_method :request, :req
@@ -12,9 +11,10 @@ class ControllerBase
   TEMPLATES_BASE_PATH = "views"
 
   # setup the controller
-  def initialize(request, response, route_params = {})
+  def initialize(request, response, resources, route_params = {})
     @req, @res = request, response
     @params = Params.new(request, route_params)
+    @resources = resources
   end
 
   # populate the response with content
@@ -58,13 +58,23 @@ class ControllerBase
 
   # use this with the router to call action_name (:index, :show, :create...)
   def invoke_action(name)
+    if request.request_method != 'GET' && !csrf_safe?
+      render_content('Invalid authenticity token.', 'text/text')
+      return
+    end
     self.send(name)
     unless already_rendered?
       render(name)
     end
   end
 
+  def authenticity_token
+    resources[:csrf_token].generate_token(session.session_id)
+  end
+
   private
+
+  attr_reader :resources
 
   def get_binding
     binding
@@ -80,5 +90,18 @@ class ControllerBase
 
   def template_path(template)
     File.join(TEMPLATES_BASE_PATH, controller_name, "#{template}.html.erb")
+  end
+
+  def csrf_safe?
+    return true unless resources[:csrf_token].has_token?(session.session_id)
+    valid = resources[:csrf_token].valid_token?(
+      session.session_id,
+      params[:authenticity_token]
+    )
+    if valid
+      resources[:csrf_token].discard_token(session.session_id)
+      return true
+    end
+    false
   end
 end

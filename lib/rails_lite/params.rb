@@ -27,13 +27,17 @@ class Params
   end
 
   def permit(*keys)
+    keys.map!(&:to_s)
     @permitted_keys.concat(keys)
+    self
   end
 
   def require(key)
     required_value = self[key]
     raise AttributeNotFoundError, '#{key} not found' unless required_value
-    required_value
+    required_params = self.dup
+    required_params.params = required_value
+    required_params
   end
 
   def permitted?(key)
@@ -45,6 +49,10 @@ class Params
   end
 
   class AttributeNotFoundError < ArgumentError; end;
+
+  protected
+
+  attr_writer :params
 
   private
   # this should return deeply nested hash
